@@ -45,11 +45,12 @@ output_folder = os.path.join(input_folder, "calres")
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
+# Update band mappings for ETM+ and OLI
 bands_etm = {"b3": 2, "b4": 3, "b5": 4, "b6": 5, "b7": 6}
 bands_oli = {"b3": 3, "b4": 4, "b5": 5, "b6": 6, "b7": 7}
 
 for year in ['2005', '2010', '2016', '2020']:
-    raster_file = f"{year}water"  # No file extension for the main file
+    raster_file = f"{year}water"  # Assuming no file extension for the main file
     vector_file = f"{year}AWEI_nsh.shp"
     raster_path = os.path.join(input_folder, raster_file)
     vector_path = os.path.join(input_folder, vector_file)
@@ -64,18 +65,17 @@ for year in ['2005', '2010', '2016', '2020']:
         b4 = band_data[bands_mapping["b4"] - 1]
         b5 = band_data[bands_mapping["b5"] - 1]
         b6 = band_data[bands_mapping["b6"] - 1]
-        b7 = band_data[bands_mapping["b7"] - 1] if sensor_type == "OLI" else None
+        b7 = band_data[bands_mapping["b7"] - 1] if sensor_type == "OLI" else band_data[
+            bands_mapping["b6"] - 1]  # Use b6 as b7 for ETM+
 
         # Apply the water mask
-        b3, b4, b5, b6 = [np.where(water_mask, band, np.nan) for band in [b3, b4, b5, b6]]
-        if b7 is not None:
-            b7 = np.where(water_mask, b7, np.nan)
+        b3, b4, b5, b6, b7 = [np.where(water_mask, band, np.nan) for band in [b3, b4, b5, b6, b7]]
 
         # Calculate water quality parameters
         chl_a = calculate_chl_a(b5, b6)
         tn = calculate_tn(b4, b6)
-        tp = calculate_tp(b4, b6, b7) if b7 is not None else np.full_like(b6, np.nan)
-        cod_mn = calculate_cod_mn(b3, b5, b7) if b7 is not None else np.full_like(b5, np.nan)
+        tp = calculate_tp(b4, b6, b7)
+        cod_mn = calculate_cod_mn(b3, b5, b7)
 
         profile = src.profile
         profile.update(dtype='float32', count=1, driver='ENVI', interleave='band')
