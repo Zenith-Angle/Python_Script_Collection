@@ -3,98 +3,65 @@ import numpy as np
 import rasterio
 
 
-# 定义计算各项指标TLI值的函数
-def calculate_tli_chla(chl_a):
-    return 10 * (2.5 + 1.086 * np.log(chl_a))
+def calculate_tli(chl_a, tn, tp, cod_mn, weights):
+    tli_chl_a = 10 * (2.5 + 1.086 * np.log(chl_a))
+    tli_tn = 10 * (5.453 + 1.694 * np.log(tn))
+    tli_tp = 10 * (9.436 + 1.624 * np.log(tp))
+    tli_cod_mn = 10 * (0.109 + 2.661 * np.log(cod_mn))
+
+    tli_values = {
+        "tli_chl_a": tli_chl_a,
+        "tli_tn": tli_tn,
+        "tli_tp": tli_tp,
+        "tli_cod_mn": tli_cod_mn
+    }
+
+    # Calculate the weighted sum for the total TLI
+    total_tli = np.nansum([tli_values[key] * weight for key, weight in weights.items()], axis=0)
+
+    return tli_values, total_tli
 
 
-def calculate_tli_tn(tn):
-    return 10 * (5.453 + 1.694 * np.log(tn))
-
-
-def calculate_tli_tp(tp):
-    return 10 * (9.436 + 1.624 * np.log(tp))
-
-
-def calculate_tli_codmn(cod_mn):
-    return 10 * (0.109 + 2.661 * np.log(cod_mn))
-
-
-# 权重
-weights = {
-    'chl_a': 0.32606,
-    'tn': 0.21924,
-    'tp': 0.23007,
-    'cod_mn': 0.22462
-}
-
-# 输入文件夹路径
 input_folder = r"D:\yaoganguochengshuju\EX1\calres"
-# 输出文件夹路径
-output_folder = r"D:\yaoganguochengshuju\EX1\calres\assessment"
+output_folder = os.path.join(input_folder, "assessment")
 
-# 创建输出目录
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
-# 文件路径配置
-input_files = {
-    "2005water": "ETM+",
-    "2010water": "ETM+",
-    "2016water": "OLI",
-    "2020AWEI_nsh_water": "OLI"
+weights = {
+    "tli_chl_a": 0.32606,
+    "tli_tn": 0.21924,
+    "tli_tp": 0.23007,
+    "tli_cod_mn": 0.22462
 }
 
-# 波段对应配置
-bands_etm = {"b3": 2, "b4": 3, "b5": 4, "b6": 5, "b7": 6}
-bands_oli = {"b3": 3, "b4": 4, "b5": 5, "b6": 6, "b7": 7}
+for year in ['2005', '2010', '2016', '2020']:
+    files = {
+        "chl_a": os.path.join(input_folder, f"{year}_chl_a"),
+        "tn": os.path.join(input_folder, f"{year}_tn"),
+        "tp": os.path.join(input_folder, f"{year}_tp"),
+        "cod_mn": os.path.join(input_folder, f"{year}_cod_mn")
+    }
 
-# 处理每个文件
-for file_name, sensor_type in input_files.items():
-    # 构建输入文件路径
-    data_file = os.path.join(input_folder, file_name)
+    # Read the data for each parameter
+    data = {param: rasterio.open(file).read(1) for param, file in files.items()}
 
-    # 读取数据并计算指标
-    with rasterio.open(data_file) as src:
-        # 根据传感器类型选择波段
-        band_nums = bands_oli if sensor_type == "OLI" else bands_etm
-        bands = src.read([band_nums[b] for b in ['b3', 'b4', 'b5', 'b6', 'b7'] if b in band_nums])
+    # Calculate the TLI values for each parameter and the total TLI
+    tli_values, total_tli = calculate_tli(data['chl_a'], data['tn'], data['tp'], data['cod_mn'], weights)
 
-        # 分配波段数据
-        b3, b4, b5, b6, b7 = [bands[band_nums[b] - 1] if b in band_nums else None for b in
-                              ['b3', 'b4', 'b5', 'b6', 'b7']]
+    # Define profile for output file
+    profile = rasterio.open(files['chl_a']).profile
+    profile.update(dtype='float32', count=1, driver='ENVI', interleave='band')
 
-        # 计算TLI值
-        tli_chla = calculate_tli_chla(b5, b6)
-        tli_tn = calculate_tli_tn(b4, b6)
-        tli_tp = calculate_tli_tp(b4, b6, b7)
-        tli_codmn = calculate_tli_codmn(b3, b5, b7)
+    # Save the TLI results for each parameter and the total TLI
+    for param, tli_data in tli_values.items():
+        output_path = os.path.join(output_folder, f"{year}_{param}.dat")
+        with rasterio.open(output_path, 'w', **profile) as dst:
+            dst.write(tli_data.astype('float32'), 1)
 
-        # 保存计算结果到ENVI格式
-        profile.update(driver='ENVI')
+    # Save the total TLI
+    total_tli_path = os.path.join(output_folder, f"{year}_total_tli.dat")
+    with rasterio.open(total_tli_path, 'w', **profile) as dst:
+        dst.write(total_tli.astype('float32'), 1)
 
-        output_files = {
-            "tli_chla": tli_chla,
-            "tli_tn": tli_tn,
-            "tli_tp": tli_tp,
-            "tli_codmn": tli_codmn
-        }
-
-        for output_name, output_data in output_files.items():
-            # 设置输出文件路径
-            output_file_path = os.path.join(output_folder, f"{file_name}_{output_name}")
-            with rasterio.open(output_file_path, 'w', **profile) as dst:
-                dst.write(output_data, 1)
-
-        # 计算综合TLI值
-        tli_total = (weights['chl_a'] * tli_chla +
-                     weights['tn'] * tli_tn +
-                     weights['tp'] * tli_tp +
-                     weights['cod_mn'] * tli_codmn)
-
-        # 保存综合TLI值到ENVI格式
-        output_file_path = os.path.join(output_folder, f"{file_name}_tli_total")
-        with rasterio.open(output_file_path, 'w', **profile) as dst:
-            dst.write(tli_total, 1)
-
-    print(f"TLI计算并保存完成：{file_name}")
+print("TLI calculations completed and saved in ENVI format.")
