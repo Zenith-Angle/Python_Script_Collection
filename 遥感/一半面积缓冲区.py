@@ -27,7 +27,7 @@ def calculate_external_buffer_area(feature, target_area):
 
 
 # 读取shp文件
-gdf = gpd.read_file(r"D:\yaoganguochengshuju\EX5\Edge\2015.shp")
+gdf = gpd.read_file(r"D:\yaoganguochengshuju\EX5\Edge\2020.shp")
 
 # 计算每个要素的外部缓冲区
 buffered_geometries = gdf['geometry'].apply(lambda x: calculate_external_buffer_area(x, x.area * 0.5))
@@ -36,4 +36,4 @@ buffered_geometries = gdf['geometry'].apply(lambda x: calculate_external_buffer_
 buffered_gdf = gpd.GeoDataFrame(geometry=buffered_geometries)
 
 # 保存为新的shp文件
-buffered_gdf.to_file(r"D:\yaoganguochengshuju\EX5\Edge\2015_r.shp")
+buffered_gdf.to_file(r"D:\yaoganguochengshuju\EX5\Edge\2015_r1.shp")
