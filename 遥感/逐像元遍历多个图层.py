@@ -17,7 +17,7 @@ file_paths = [
     r"D:\yaoganguochengshuju\EX5\analysis\2000HI.tif",
     r"D:\yaoganguochengshuju\EX5\Index\Extract_2000NDVI.tif",
     r"D:\yaoganguochengshuju\EX5\Index\Extract_2000NDBI.tif",
-    r"D:\yaoganguochengshuju\EX5\Index\Extract_2000NDBaI.tif",
+    r"D:\yaoganguochengshuju\EX5\Index\Extract_2000NDISI.tif",
     r"D:\yaoganguochengshuju\EX5\Index\Extract_2000MNDWI.tif",
     # 添加其它四个文件的路径
     # ...
