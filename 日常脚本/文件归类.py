@@ -4,7 +4,7 @@ import shutil
 # 定义文件类型和目标文件夹的映射
 file_types = {
     'Compressed': ['zip', 'rar', 'r0*', 'r1*', 'arj', 'gz', 'sit', 'sitx', 'sea', 'ace', 'bz2', '7z'],
-    'Document': ['doc', 'pdf', 'ppt', 'pps', 'docx', 'pptx'],
+    'Document': ['doc', 'pdf', 'ppt', 'pps', 'docx', 'pptx','xlsx', 'xls', 'txt', 'rtf', 'md', 'csv'],
     'Music': ['mp3', 'wav', 'wma', 'mpa', 'ram', 'ra', 'aac', 'aif', 'm4a', 'tsa'],
     'Application': ['exe', 'msi'],
     'Video': ['avi', 'mpg', 'mpe', 'mpeg', 'asf', 'wmv', 'mov', 'qt', 'rm', 'mp4', 'flv', 'm4v', 'webm', 'ogv', 'ogg',
@@ -35,7 +35,7 @@ def organize_files(source_folder):
 
 
 # 设置源文件夹路径
-source_folder = '/path/to/your/folder'
+source_folder = r"C:\Users\25830\Downloads"
 
 # 调用整理函数
 organize_files(source_folder)
