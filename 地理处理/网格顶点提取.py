@@ -28,9 +28,9 @@ def extract_corners(shp_path, output_folder):
     for i, polygon in enumerate(gdf_sorted.geometry):
         if isinstance(polygon, Polygon):
             minx, miny, maxx, maxy = polygon.bounds
-            # 左上角顶点，保留小数点后六位
+            # 左上角顶点，强制保留小数点后六位
             top_left = (round(minx, 6), round(maxy, 6))
-            # 右下角顶点，保留小数点后六位
+            # 右下角顶点，强制保留小数点后六位
             bottom_right = (round(maxx, 6), round(miny, 6))
             corners.append((index, top_left, bottom_right))
             data_for_excel.loc[i] = [index, top_left[0], top_left[1], bottom_right[0], bottom_right[1]]
@@ -50,8 +50,8 @@ def extract_corners(shp_path, output_folder):
     # 保存更新后的shapefile
     gdf_sorted.to_file(updated_shp_path)
 
-    # 构建输出Excel文件的完整路径
-    output_path = os.path.join(output_folder, 'corners.xlsx')
+    # 构建输出Excel文件的完整路径，文件名为原文件名加上“_vertices”
+    output_path = os.path.join(output_folder, f'{base_name}_vertices.xlsx')
 
     # 将顶点信息保存到Excel文件中
     with pd.ExcelWriter(output_path) as writer:
@@ -62,6 +62,6 @@ def extract_corners(shp_path, output_folder):
 
 
 # 指定shapefile路径和输出文件夹路径
-shp_path = r"C:\Users\25830\OneDrive - oganneson\开发竞赛\数据\路线数据\西宁网格2km.shp"
-output_folder = r"C:\Users\25830\OneDrive - oganneson\开发竞赛\数据\路线数据"
+shp_path = r"D:\开发竞赛\数据\路线数据\西宁\西宁网格1km.shp"
+output_folder = r"D:\开发竞赛\数据\路线数据\西宁"
 extract_corners(shp_path, output_folder)

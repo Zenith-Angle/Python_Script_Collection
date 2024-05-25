@@ -66,6 +66,6 @@ def update_shapefile_with_json(shapefile_path, json_folder):
 
 
 # 调用函数
-shapefile_path = r"D:\开发竞赛\数据\路线数据\西宁网格3km_1.shp"
-json_folder = r"D:\开发竞赛\数据\路线数据\道路状况\请求结果_3km"
+shapefile_path = r"D:\开发竞赛\数据\路线数据\西宁\西宁网格1km_1.shp"
+json_folder = r"D:\开发竞赛\数据\路线数据\道路状况\请求结果_1km"
 update_shapefile_with_json(shapefile_path, json_folder)

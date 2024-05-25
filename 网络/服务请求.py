@@ -5,18 +5,17 @@ import json
 import os
 
 # 指定输出文件夹路径
-output_folder = "path_to_your_folder"  # 请将"path_to_your_folder"替换为你的文件夹路径
+output_folder = r"C:\Users\25830\Downloads\Compressed\lzw\results_old"  # 请将"path_to_your_folder"替换为你的文件夹路径
 
 
 def fetch_traffic_data():
-    url = "https://restapi.amap.com/v3/traffic/status/circle"
+    url = "https://restapi.amap.com/v3/traffic/status/rectangle"
     params = {
-        "location": "101.777430,36.618946",
-        "level": "2",
-        "radius": "5000",
-        "output": "json",
         "extensions": "all",
-        "key": "bb3a9c2dda05ce08846a2c24357bd0bf"
+        "key": "eb1c2fe24b0043e604d6086b80d4ae23",
+        "rectangle": "101.730569,36.655544;101.764569,36.621544",
+        "output": "json",
+        "level": 6
     }
     response = requests.get(url, params=params)
     return response.json()
@@ -31,8 +30,8 @@ def save_data(data):
         os.makedirs(output_folder)
     # 拼接完整的文件路径
     file_path = os.path.join(output_folder, filename)
-    with open(file_path, 'w') as f:
-        json.dump(data, f)
+    with open(file_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)  # 使用ensure_ascii参数来保证汉字的正确编码
     print(f"Data saved at {file_path}")
 
 
@@ -41,7 +40,7 @@ def main():
         data = fetch_traffic_data()
         save_data(data)
         print("Waiting for the next fetch...")
-        time.sleep(600)  # 等待10分钟
+        time.sleep(900)  # 等待10分钟
 
 
 if __name__ == "__main__":
