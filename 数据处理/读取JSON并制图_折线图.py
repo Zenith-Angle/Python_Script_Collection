@@ -80,4 +80,4 @@ def read_and_plot_data(folder_path):
     plt.show()
 
 # 使用实际的文件夹路径替换此处的'your_folder_path'
-read_and_plot_data(r"C:\Users\25830\Downloads\Compressed\lzw\results")
+read_and_plot_data(r"C:\Users\25830\Downloads\lzw\results")
