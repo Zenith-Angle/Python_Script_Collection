@@ -40,7 +40,7 @@ def main():
         data = fetch_traffic_data()
         save_data(data)
         print("Waiting for the next fetch...")
-        time.sleep(900)  # 等待10分钟
+        time.sleep(900)
 
 
 if __name__ == "__main__":
