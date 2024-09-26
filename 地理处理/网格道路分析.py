@@ -11,6 +11,7 @@
 
 import geopandas as gpd
 import os
+from tqdm import tqdm  # 导入tqdm库
 
 
 def calculate_traffic_capacity_and_points(grid_path, roads_path, points_path):
@@ -36,14 +37,16 @@ def calculate_traffic_capacity_and_points(grid_path, roads_path, points_path):
         total_capacity = (intersected_roads['length'] * intersected_roads['capacity']).sum() / 100
         return round(total_capacity, 6)  # 保留6位小数
 
-    grid['trfc_cap'] = grid.geometry.apply(sum_road_capacity)
+    # 使用 tqdm 包装 iterables
+    grid['trfc_cap'] = [sum_road_capacity(geom) for geom in tqdm(grid.geometry, desc="Calculating Traffic Capacity")]
 
     # 计算每个网格内的点的数量
     def count_points(geom):
         intersected_points = points[points.geometry.intersects(geom)]
         return len(intersected_points)
 
-    grid['pts_num'] = grid.geometry.apply(count_points)
+    # 使用 tqdm 包装 iterables
+    grid['pts_num'] = [count_points(geom) for geom in tqdm(grid.geometry, desc="Counting Points")]
 
     # 输出文件，使用输入网格文件的目录
     output_path = os.path.join(os.path.dirname(grid_path),
@@ -53,7 +56,8 @@ def calculate_traffic_capacity_and_points(grid_path, roads_path, points_path):
 
 # 调用函数
 calculate_traffic_capacity_and_points(
-    r"D:\开发竞赛\数据\路线数据\西宁\西宁网格1km_1_traffic.shp",
-    r"D:\开发竞赛\数据\路线数据\西宁\西宁road投影转地理.shp",
-    r"D:\开发竞赛\数据\路线数据\西宁\西宁_wb.shp"
+    r"D:\开发竞赛\数据\路线数据\区域网格5km.shp",
+    r"D:\开发竞赛\数据\路线数据\road投影转地理.shp",
+    r"D:\开发竞赛\数据\路线数据\裁剪后微博.shp"
 )
+

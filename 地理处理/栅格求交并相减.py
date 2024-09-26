@@ -105,8 +105,8 @@ def main():
     # 计算两个栅格文件的差值，并处理异常值
     diff_data = np.nan_to_num(out_image1[0]) - np.nan_to_num(out_image2[0])
 
-    # 保留-100到+100之间的值，其余值设为NaN
-    diff_data[(diff_data < -100) | (diff_data > 100)] = np.nan
+    # 保留大于0且小于100的值，其余值设为NaN
+    diff_data[(diff_data < 0) | (diff_data >= 100)] = np.nan
 
     # 设置任何NaN值为0
     diff_data[np.isnan(diff_data)] = 0

@@ -29,8 +29,8 @@ def calculate_exped(shp_path, model_path):
 
 
 # 定义路径
-shp_path = r"C:\Users\25830\OneDrive - oganneson\开发竞赛\数据\路线数据\模型建立\input_shapefile.shp"
-model_path = r"C:\Users\25830\OneDrive - oganneson\开发竞赛\数据\路线数据\模型建立\SVR\svr_model.pkl"
+shp_path = r"D:\开发竞赛\数据\路线数据\区域网格5km_staTrafficAndPoints.shp"
+model_path = r"D:\开发竞赛\数据\路线数据\模型建立\SVR\svr_model.pkl"
 
 # 调用函数
 calculate_exped(shp_path, model_path)
