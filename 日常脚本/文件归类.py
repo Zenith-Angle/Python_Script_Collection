@@ -3,12 +3,19 @@ import shutil
 
 # 定义文件类型和目标文件夹的映射
 file_types = {
-    'Compressed': ['zip', 'rar', 'r0*', 'r1*', 'arj', 'gz', 'sit', 'sitx', 'sea', 'ace', 'bz2', '7z'],
-    'Document': ['doc', 'pdf', 'ppt', 'pps', 'docx', 'pptx','xlsx', 'xls', 'txt', 'rtf', 'md', 'csv'],
-    'Music': ['mp3', 'wav', 'wma', 'mpa', 'ram', 'ra', 'aac', 'aif', 'm4a', 'tsa'],
-    'Application': ['exe', 'msi'],
-    'Video': ['avi', 'mpg', 'mpe', 'mpeg', 'asf', 'wmv', 'mov', 'qt', 'rm', 'mp4', 'flv', 'm4v', 'webm', 'ogv', 'ogg',
-              'mkv', 'ts', 'tsv']
+    'Compressed': ['zip', 'rar', 'r0*', 'r1*', 'arj', 'gz', 'sit', 'sitx', 'sea', 'ace',
+                   'bz2', '7z'],
+    'Documents': ['doc', 'pdf', 'ppt', 'pps', 'docx', 'pptx', 'xlsx', 'xls', 'txt', 'rtf',
+                 'md', 'csv'],
+    'Music': ['mp3', 'wav', 'wma', 'mpa', 'ram', 'ra', 'aac', 'aif', 'm4a', 'tsa','flac'],
+    'Application': ['exe', 'msi','apk'],
+    'Video': ['avi', 'mpg', 'mpe', 'mpeg', 'asf', 'wmv', 'mov', 'qt', 'rm', 'mp4', 'flv',
+              'm4v', 'webm', 'ogv', 'ogg',
+              'mkv', 'ts', 'tsv'],
+    'Torrent': ['torrent', 'magnet'],
+    'EBook': ['epub', 'mobi', 'azw3', 'azw', 'fb2', 'ibook', 'lit', 'prc'],
+    'Picture': ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'tif', 'svg', 'psd','webp'],
+    'GeoFile': ['shp', 'geojson', 'kml', 'kmz', 'gpx', 'tif', 'tiff', 'dem', 'asc', 'dbf']
 }
 
 
@@ -22,7 +29,8 @@ def organize_files(source_folder):
         for ext in extensions:
             # 处理通配符 *
             if '*' in ext:
-                files = [f for f in os.listdir(source_folder) if f.startswith(ext.replace('*', ''))]
+                files = [f for f in os.listdir(source_folder) if
+                         f.startswith(ext.replace('*', ''))]
             else:
                 files = [f for f in os.listdir(source_folder) if f.endswith(ext)]
 
