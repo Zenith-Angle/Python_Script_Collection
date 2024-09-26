@@ -28,7 +28,7 @@ def process_text_file(input_txt):
 
     # 只保留出现次数不少于5次的词
     filtered_word_count = {word: count for word, count in word_count.items() if
-                           count >= 5}
+                           count >= 2}
     return [{'name': word, 'value': count} for word, count in filtered_word_count.items()]
 
 
